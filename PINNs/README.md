@@ -14,26 +14,29 @@ u_t(t, x) = u_{xx}(t, x), \quad t \in [0, T_{max}], \quad x \in [0, L]
 $$
 
 where the domain boundaries from the implementation are defined by:
-- $T_{max} = 60$
-- $L = 1$ (Length of the bar)
+* $T_{max} = 60$
+* $L = 1$ (Length of the bar)
 
 ### 2. Boundary and Initial Conditions
 The system is subject to asymmetric Dirichlet boundary conditions (where the left end is held ice-cold and the right end is heated) and a completely cold initial state:
 
-- **Left Spatial Boundary ($x = 0$):**
-  $$
-  u(t, 0) = 0, \quad \forall t \in (0, T_{max}]
-  $$
+* **Left Spatial Boundary ($x = 0$):**
 
-- **Right Spatial Boundary ($x = L$):**
-  $$
-  u(t, L) = 1, \quad \forall t \in (0, T_{max}]
-  $$
+$$
+u(t, 0) = 0, \quad \forall t \in (0, T_{max}]
+$$
 
-- **Temporal Initial Condition ($t = 0$):**
-  $$
-  u(x, 0) = u_0(x) = 0, \quad \forall x \in [0, L]
-  $$
+* **Right Spatial Boundary ($x = L$):**
+
+$$
+u(t, L) = 1, \quad \forall t \in (0, T_{max}]
+$$
+
+* **Temporal Initial Condition ($t = 0$):**
+
+$$
+u(x, 0) = u_0(x) = 0, \quad \forall x \in [0, L]
+$$
 
 ---
 
@@ -49,22 +52,26 @@ $$
 To enforce the governing physical law and conditions, we derive the following physics residuals:
 
 * **Interior Residual:** Enforces the heat PDE inside the spatio-temporal domain.
-    $$
-    r_{int, \theta}(t, x) := u_{\theta, t}(t, x) - u_{\theta, xx}(t, x), \quad \forall t \in [0, T_{max}], \quad x \in [0, L]
-    $$
+
+$$
+r_{int, \theta}(t, x) := u_{\theta, t}(t, x) - u_{\theta, xx}(t, x), \quad \forall t \in [0, T_{max}], \quad x \in [0, L]
+$$
 
 * **Spatial Boundary Residuals:** Enforces compliance at the physical boundaries.
-    $$
-    r_{sb, \theta}^{(0)}(t) := u_{\theta}(t, 0) - 0, \quad \forall t \in (0, T_{max}]
-    $$
-    $$
-    r_{sb, \theta}^{(L)}(t) := u_{\theta}(t, L) - 1, \quad \forall t \in (0, T_{max}]
-    $$
+
+$$
+r_{sb, \theta}^{(0)}(t) := u_{\theta}(t, 0) - 0, \quad \forall t \in (0, T_{max}]
+$$
+
+$$
+r_{sb, \theta}^{(L)}(t) := u_{\theta}(t, L) - 1, \quad \forall t \in (0, T_{max}]
+$$
 
 * **Temporal Boundary (Initial) Residual:** Enforces compliance with the initial state at $t = 0$.
-    $$
-    r_{tb, \theta}(x) := u_{\theta}(0, x) - 0, \quad \forall x \in [0, L]
-    $$
+
+$$
+r_{tb, \theta}(x) := u_{\theta}(0, x) - 0, \quad \forall x \in [0, L]
+$$
 
 ### 2. Continuous Objective Functions
 Ideally, the parameters $\theta$ minimize the continuous $L^2$ norm of these residuals across their respective domains:
@@ -88,18 +95,27 @@ $$
 The integral terms are approximated using statistical sampling. Rather than standard pseudo-random numbers, we utilize low-discrepancy **Sobol sequences** to ensure an optimal space-filling distribution across the training domains.
 
 We define the following discrete training sets:
-- **Interior Points:** $$
-  S_{int} = \{y_n\}_{n=1}^{N_{int}}, \quad y_n = (t, x)_n \in [0, T_{max}] \times [0, L]
-  $$
-- **Spatial Boundary Points:** $$
-  S_{sb, 0} = \{t_n\}_{n=1}^{N_{sb}}, \quad t_n \in [0, T_{max}]
-  $$
-  $$
-  S_{sb, L} = \{t_n\}_{n=1}^{N_{sb}}, \quad t_n \in [0, T_{max}]
-  $$
-- **Temporal Boundary Points:** $$
-  S_{tb} = \{x_n\}_{n=1}^{N_{tb}}, \quad x_n \in [0, L]
-  $$
+* **Interior Points:**
+
+$$
+S_{int} = \{y_n\}_{n=1}^{N_{int}}, \quad y_n = (t, x)_n \in [0, T_{max}] \times [0, L]
+$$
+
+* **Spatial Boundary Points:**
+
+$$
+S_{sb, 0} = \{t_n\}_{n=1}^{N_{sb}}, \quad t_n \in [0, T_{max}]
+$$
+
+$$
+S_{sb, L} = \{t_n\}_{n=1}^{N_{sb}}, \quad t_n \in [0, T_{max}]
+$$
+
+* **Temporal Boundary Points:**
+
+$$
+S_{tb} = \{x_n\}_{n=1}^{N_{tb}}, \quad x_n \in [0, L]
+$$
 
 The default sizes chosen in the implementation are $N_{int} = 2000$, $N_{sb} = 1000$, and $N_{tb} = 400$.
 
